@@ -1,11 +1,10 @@
-require("dotenv").config();
-const path = require("path");
-const crypto = require("crypto");
-const express = require("express");
-const session = require("express-session");
-const { MongoClient } = require("mongodb");
+import "dotenv/config";
+import crypto from "node:crypto";
+import express from "express";
+import session from "express-session";
+import { MongoClient } from "mongodb";
+import ViteExpress from "vite-express";
 
-const publicDir = path.join(__dirname, "public");
 const port = process.env.PORT || 3000;
 const dayInMilliseconds = 24 * 60 * 60 * 1000;
 const priorities = new Set(["low", "medium", "high"]);
@@ -202,11 +201,9 @@ app.post("/api/assignments", requireAuth, async (request, response) => {
 			.json({ assignments: await assignmentsForUser(username) });
 	} catch (error) {
 		console.error(error);
-		return response
-			.status(400)
-			.json({
-				error: error.message || "The request could not be completed.",
-			});
+		return response.status(400).json({
+			error: error.message || "The request could not be completed.",
+		});
 	}
 });
 
@@ -228,11 +225,9 @@ app.put("/api/assignments/:id", requireAuth, async (request, response) => {
 		});
 	} catch (error) {
 		console.error(error);
-		return response
-			.status(400)
-			.json({
-				error: error.message || "The request could not be completed.",
-			});
+		return response.status(400).json({
+			error: error.message || "The request could not be completed.",
+		});
 	}
 });
 
@@ -259,8 +254,6 @@ app.delete("/api/assignments/:id", requireAuth, async (request, response) => {
 	}
 });
 
-app.use(express.static(publicDir));
-
 app.use("/api", (request, response) => {
 	return response.status(404).json({ error: "API route not found." });
 });
@@ -270,7 +263,7 @@ const start = async () => {
 	const db = client.db("dueSoon");
 	users = db.collection("users");
 	assignments = db.collection("assignments");
-	app.listen(port, () => {
+	ViteExpress.listen(app, port, () => {
 		console.log("Due Soon is running on port " + port);
 	});
 };
