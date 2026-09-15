@@ -1,0 +1,4 @@
+#content-grid[hidden],
+#login-card[hidden] {
+	display: none;
+}
